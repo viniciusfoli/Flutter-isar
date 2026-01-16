@@ -22,18 +22,28 @@ const PecaSchema = CollectionSchema(
       name: r'cid',
       type: IsarType.string,
     ),
-    r'nome': PropertySchema(
+    r'historicoJson': PropertySchema(
       id: 1,
+      name: r'historicoJson',
+      type: IsarType.string,
+    ),
+    r'instrucao': PropertySchema(
+      id: 2,
+      name: r'instrucao',
+      type: IsarType.string,
+    ),
+    r'nome': PropertySchema(
+      id: 3,
       name: r'nome',
       type: IsarType.string,
     ),
     r'temperatura': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'temperatura',
       type: IsarType.double,
     ),
     r'vibracao': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'vibracao',
       type: IsarType.double,
     )
@@ -73,6 +83,13 @@ int _pecaEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.cid.length * 3;
+  bytesCount += 3 + object.historicoJson.length * 3;
+  {
+    final value = object.instrucao;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.nome.length * 3;
   return bytesCount;
 }
@@ -84,9 +101,11 @@ void _pecaSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.cid);
-  writer.writeString(offsets[1], object.nome);
-  writer.writeDouble(offsets[2], object.temperatura);
-  writer.writeDouble(offsets[3], object.vibracao);
+  writer.writeString(offsets[1], object.historicoJson);
+  writer.writeString(offsets[2], object.instrucao);
+  writer.writeString(offsets[3], object.nome);
+  writer.writeDouble(offsets[4], object.temperatura);
+  writer.writeDouble(offsets[5], object.vibracao);
 }
 
 Peca _pecaDeserialize(
@@ -97,10 +116,12 @@ Peca _pecaDeserialize(
 ) {
   final object = Peca();
   object.cid = reader.readString(offsets[0]);
+  object.historicoJson = reader.readString(offsets[1]);
   object.id = id;
-  object.nome = reader.readString(offsets[1]);
-  object.temperatura = reader.readDoubleOrNull(offsets[2]);
-  object.vibracao = reader.readDoubleOrNull(offsets[3]);
+  object.instrucao = reader.readStringOrNull(offsets[2]);
+  object.nome = reader.readString(offsets[3]);
+  object.temperatura = reader.readDoubleOrNull(offsets[4]);
+  object.vibracao = reader.readDoubleOrNull(offsets[5]);
   return object;
 }
 
@@ -116,8 +137,12 @@ P _pecaDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
+      return (reader.readString(offset)) as P;
+    case 4:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 5:
       return (reader.readDoubleOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -437,6 +462,136 @@ extension PecaQueryFilter on QueryBuilder<Peca, Peca, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'historicoJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'historicoJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'historicoJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'historicoJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'historicoJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'historicoJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'historicoJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'historicoJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'historicoJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> historicoJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'historicoJson',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Peca, Peca, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -485,6 +640,152 @@ extension PecaQueryFilter on QueryBuilder<Peca, Peca, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'instrucao',
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'instrucao',
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'instrucao',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'instrucao',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'instrucao',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'instrucao',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'instrucao',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'instrucao',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'instrucao',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'instrucao',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'instrucao',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterFilterCondition> instrucaoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'instrucao',
+        value: '',
       ));
     });
   }
@@ -791,6 +1092,30 @@ extension PecaQuerySortBy on QueryBuilder<Peca, Peca, QSortBy> {
     });
   }
 
+  QueryBuilder<Peca, Peca, QAfterSortBy> sortByHistoricoJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'historicoJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterSortBy> sortByHistoricoJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'historicoJson', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterSortBy> sortByInstrucao() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'instrucao', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterSortBy> sortByInstrucaoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'instrucao', Sort.desc);
+    });
+  }
+
   QueryBuilder<Peca, Peca, QAfterSortBy> sortByNome() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.asc);
@@ -841,6 +1166,18 @@ extension PecaQuerySortThenBy on QueryBuilder<Peca, Peca, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Peca, Peca, QAfterSortBy> thenByHistoricoJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'historicoJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterSortBy> thenByHistoricoJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'historicoJson', Sort.desc);
+    });
+  }
+
   QueryBuilder<Peca, Peca, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -850,6 +1187,18 @@ extension PecaQuerySortThenBy on QueryBuilder<Peca, Peca, QSortThenBy> {
   QueryBuilder<Peca, Peca, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterSortBy> thenByInstrucao() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'instrucao', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QAfterSortBy> thenByInstrucaoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'instrucao', Sort.desc);
     });
   }
 
@@ -898,6 +1247,21 @@ extension PecaQueryWhereDistinct on QueryBuilder<Peca, Peca, QDistinct> {
     });
   }
 
+  QueryBuilder<Peca, Peca, QDistinct> distinctByHistoricoJson(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'historicoJson',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Peca, Peca, QDistinct> distinctByInstrucao(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'instrucao', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Peca, Peca, QDistinct> distinctByNome(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -928,6 +1292,18 @@ extension PecaQueryProperty on QueryBuilder<Peca, Peca, QQueryProperty> {
   QueryBuilder<Peca, String, QQueryOperations> cidProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cid');
+    });
+  }
+
+  QueryBuilder<Peca, String, QQueryOperations> historicoJsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'historicoJson');
+    });
+  }
+
+  QueryBuilder<Peca, String?, QQueryOperations> instrucaoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'instrucao');
     });
   }
 

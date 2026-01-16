@@ -13,4 +13,10 @@ class Peca {
   late String nome;
   double? temperatura;
   double? vibracao;
+
+  String? instrucao; 
+
+  // Campo que guardará a lista de comentários em formato JSON string
+  // Iniciamos com '[]' para representar uma lista vazia
+  String historicoJson = '[]';
 }
